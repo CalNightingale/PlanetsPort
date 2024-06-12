@@ -6,8 +6,19 @@
 
 [node name="Planet" type="Node3D" parent="."]
 script = ExtResource("1_7700g")
+Resolution = 6
+
+[node name="ResSlider" type="HSlider" parent="Planet"]
+offset_left = 798.0
+offset_top = 13.0
+offset_right = 1143.0
+offset_bottom = 58.0
+min_value = 2.0
+value = 2.0
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 2.08165e-12, 5)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+
+[connection signal="drag_ended" from="Planet/ResSlider" to="Planet" method="_on_res_slider_drag_ended"]

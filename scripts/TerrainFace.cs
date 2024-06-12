@@ -29,13 +29,11 @@ public class TerrainFace
         {
             for (int x = 0; x < _resolution; x++)
             {
-                //GD.Print("(" + x + "," + y + ")");
                 int i = x + y * _resolution;
                 Vector2 percent = new Vector2(x, y) / (float)(_resolution - 1);
                 Vector3 pointOnUnitCube = _localUp + (percent.X - 0.5f) * 2 * _axisA + (percent.Y - 0.5f) * 2 * _axisB;
                 Vector3 pointOnUnitSphere = pointOnUnitCube.Normalized();
                 vertices[i] = pointOnUnitSphere;
-                GD.Print(vertices[i]);
 
                 if (x != _resolution - 1 && y != _resolution - 1)
                 {
@@ -53,9 +51,9 @@ public class TerrainFace
 
         _mesh.ClearSurfaces();
         var array = new Godot.Collections.Array();
-        array.Resize((int)ArrayMesh.ArrayType.Max);
-        array[(int)ArrayMesh.ArrayType.Vertex] = vertices;
-        array[(int)ArrayMesh.ArrayType.Index] = indices;
+        array.Resize((int)Mesh.ArrayType.Max);
+        array[(int)Mesh.ArrayType.Vertex] = vertices;
+        array[(int)Mesh.ArrayType.Index] = indices;
         _mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, array);
     }
 }

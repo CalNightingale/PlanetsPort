@@ -1,10 +1,23 @@
 using Godot;
 using System;
 
+[Tool]
 public partial class Planet : Node3D
 {
+	private int _res = 10;
+
     [Export]
-    public int Resolution = 10;
+    public int Resolution
+    {
+        get => _res;
+        set
+        {
+            // Update speed and reset the rotation.
+            _res = value;
+			GD.PushWarning("Setting res to " + value);
+			_Ready();
+        }
+    }
 
     private MeshInstance3D[] _meshInstances;
     private TerrainFace[] _terrainFaces;
@@ -51,4 +64,13 @@ public partial class Planet : Node3D
             face.ConstructMesh();
         }
     }
+
+	void _on_res_slider_drag_ended(bool value_changed)
+	{
+		if (value_changed)
+		{
+			var slider = GetNode<Slider>("ResSlider");
+            int newResolution = (int)slider.Value;
+            Resolution = newResolution;		}
+	}
 }
