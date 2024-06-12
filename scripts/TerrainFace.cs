@@ -15,13 +15,12 @@ public class TerrainFace
         _resolution = resolution;
         _localUp = localUp;
 
-        _axisA = new Vector3(localUp.Y, localUp.Z, localUp.X); // Corrected capitalization
+        _axisA = new Vector3(localUp.Y, localUp.Z, localUp.X);
         _axisB = _localUp.Cross(_axisA);
     }
 
     public void ConstructMesh()
     {
-        GD.Print("test");
         Vector3[] vertices = new Vector3[_resolution * _resolution];
         int[] indices = new int[(_resolution - 1) * (_resolution - 1) * 6];
         int triIndex = 0;
@@ -30,11 +29,13 @@ public class TerrainFace
         {
             for (int x = 0; x < _resolution; x++)
             {
+                //GD.Print("(" + x + "," + y + ")");
                 int i = x + y * _resolution;
                 Vector2 percent = new Vector2(x, y) / (float)(_resolution - 1);
                 Vector3 pointOnUnitCube = _localUp + (percent.X - 0.5f) * 2 * _axisA + (percent.Y - 0.5f) * 2 * _axisB;
                 Vector3 pointOnUnitSphere = pointOnUnitCube.Normalized();
                 vertices[i] = pointOnUnitSphere;
+                GD.Print(vertices[i]);
 
                 if (x != _resolution - 1 && y != _resolution - 1)
                 {
