@@ -24,6 +24,10 @@ public partial class Planet : Node3D
 
     public override void _Ready()
     {
+		// enable wireframe drawing
+		GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
+		var slider = GetNode<Slider>("ResSlider");
+		slider.Value = _res;
         Initialize();
         GenerateMesh();
     }
@@ -67,10 +71,13 @@ public partial class Planet : Node3D
 
 	void _on_res_slider_drag_ended(bool value_changed)
 	{
-		if (value_changed)
-		{
-			var slider = GetNode<Slider>("ResSlider");
-            int newResolution = (int)slider.Value;
-            Resolution = newResolution;		}
+		// DEPRECATED FIGURE OUT HOW TO DELETE
+	}
+
+	void _on_res_slider_value_changed(float value)
+	{
+		var slider = GetNode<Slider>("ResSlider");
+        int newResolution = (int)slider.Value;
+        Resolution = newResolution;	
 	}
 }
