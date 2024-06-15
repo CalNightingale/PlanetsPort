@@ -24,12 +24,10 @@ public partial class Planet : Node3D
 
     public override void _Ready()
     {
-		// enable wireframe drawing
-		GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
-		var slider = GetNode<Slider>("ResSlider");
-		slider.Value = _res;
         Initialize();
         GenerateMesh();
+        var resSlider = GetNode<Slider>("../Camera3D/SettingsMenu/VBoxContainer/ResSlider");
+        resSlider.Value = _res;
     }
 
     void Initialize()
@@ -76,8 +74,18 @@ public partial class Planet : Node3D
 
 	void _on_res_slider_value_changed(float value)
 	{
-		var slider = GetNode<Slider>("ResSlider");
-        int newResolution = (int)slider.Value;
+        int newResolution = (int)value;
         Resolution = newResolution;	
 	}
+
+    // enable wireframe drawing if checked, disable if not
+    void _on_wireframe_box_toggled(bool toggled_on)
+    {
+        if (toggled_on)
+        {
+		    GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
+        } else {
+            GetViewport().DebugDraw = Viewport.DebugDrawEnum.Disabled;
+        }
+    }
 }
