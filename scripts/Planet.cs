@@ -4,20 +4,6 @@ using System;
 [Tool]
 public partial class Planet : Node3D
 {
-    public struct PlanetSettings
-    {
-        public int Resolution;
-        public float Radius;
-        public Color Color;
-
-        public PlanetSettings(int resolution, float radius, Color color)
-        {
-            Resolution = resolution;
-            Radius = radius;
-            Color = color;
-        }
-    }
-
     private PlanetSettings _settings = new PlanetSettings(10, 1f, Colors.White);
 
     [Export]

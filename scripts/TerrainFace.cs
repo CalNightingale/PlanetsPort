@@ -4,12 +4,12 @@ using System;
 public class TerrainFace
 {
     private ArrayMesh _mesh;
-    private Planet.PlanetSettings _settings;
+    private PlanetSettings _settings;
     private Vector3 _localUp;
     private Vector3 _axisA;
     private Vector3 _axisB;
 
-    public TerrainFace(ArrayMesh mesh, Planet.PlanetSettings settings, Vector3 localUp)
+    public TerrainFace(ArrayMesh mesh, PlanetSettings settings, Vector3 localUp)
     {
         _mesh = mesh;
         _settings = settings;
@@ -58,7 +58,7 @@ public class TerrainFace
         UpdateColor(_settings.Color);
     }
 
-    public void UpdateSettings(Planet.PlanetSettings newSettings)
+    public void UpdateSettings(PlanetSettings newSettings)
     {
         _settings = newSettings;
         ConstructMesh();
