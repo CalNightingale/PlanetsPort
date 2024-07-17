@@ -5,14 +5,16 @@ public class TerrainFace
 {
     private ArrayMesh _mesh;
     private int _resolution;
+    private float _radius;
     private Vector3 _localUp;
     private Vector3 _axisA;
     private Vector3 _axisB;
 
-    public TerrainFace(ArrayMesh mesh, int resolution, Vector3 localUp)
+    public TerrainFace(ArrayMesh mesh, int resolution, float radius, Vector3 localUp)
     {
         _mesh = mesh;
         _resolution = resolution;
+        _radius = radius;
         _localUp = localUp;
 
         _axisA = new Vector3(localUp.Y, localUp.Z, localUp.X);
@@ -32,8 +34,9 @@ public class TerrainFace
                 int i = x + y * _resolution;
                 Vector2 percent = new Vector2(x, y) / (float)(_resolution - 1);
                 Vector3 pointOnUnitCube = _localUp + (percent.X - 0.5f) * 2 * _axisA + (percent.Y - 0.5f) * 2 * _axisB;
-                Vector3 pointOnUnitSphere = pointOnUnitCube.Normalized();
-                vertices[i] = pointOnUnitSphere;
+                // point on sphere = normalized point on unit cube * radius
+                Vector3 pointOnSphere = pointOnUnitCube.Normalized() * _radius;
+                vertices[i] = pointOnSphere;
 
                 if (x != _resolution - 1 && y != _resolution - 1)
                 {

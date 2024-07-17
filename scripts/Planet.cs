@@ -5,6 +5,7 @@ using System;
 public partial class Planet : Node3D
 {
 	private int _res = 10;
+    private float _radius = 1;
 
     [Export]
     public int Resolution
@@ -12,9 +13,20 @@ public partial class Planet : Node3D
         get => _res;
         set
         {
-            // Update speed and reset the rotation.
             _res = value;
 			GD.PushWarning("Setting res to " + value);
+			_Ready();
+        }
+    }
+
+    [Export]
+    public float Radius
+    {
+        get => _radius;
+        set
+        {
+            _radius = value;
+			GD.PushWarning("Setting radius to " + value);
 			_Ready();
         }
     }
@@ -28,6 +40,10 @@ public partial class Planet : Node3D
         GenerateMesh();
         var resSlider = GetNode<Slider>("../Camera3D/SettingsMenu/VBoxContainer/ResSlider");
         resSlider.Value = _res;
+        var colorPicker = GetNode<ColorPickerButton>("../Camera3D/SettingsMenu/VBoxContainer/ColorPicker");
+        this._on_color_picker_color_changed(colorPicker.Color);
+        var sizeSlider = GetNode<Slider>("../Camera3D/SettingsMenu/VBoxContainer/SizeSlider");
+        sizeSlider.Value = _radius;
     }
 
     void Initialize()
@@ -52,7 +68,7 @@ public partial class Planet : Node3D
                 _meshInstances[i].Mesh = new ArrayMesh();
             }
 
-            _terrainFaces[i] = new TerrainFace((ArrayMesh)_meshInstances[i].Mesh, Resolution, directions[i]);
+            _terrainFaces[i] = new TerrainFace((ArrayMesh)_meshInstances[i].Mesh, Resolution, Radius, directions[i]);
         }
     }
 
@@ -63,11 +79,6 @@ public partial class Planet : Node3D
             face.ConstructMesh();
         }
     }
-
-	void _on_res_slider_drag_ended(bool value_changed)
-	{
-		// DEPRECATED FIGURE OUT HOW TO DELETE
-	}
 
 	void _on_res_slider_value_changed(float value)
 	{
@@ -92,6 +103,11 @@ public partial class Planet : Node3D
         {
             face.updateColor(color);
         }
+    }
+
+    void _on_size_slider_value_changed(float newSize) 
+    {
+        Radius = newSize;
     }
 }
 

@@ -17,10 +17,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 2.08165e-12, 5)
 [node name="ResSlider" parent="Camera3D/SettingsMenu/VBoxContainer" index="0"]
 value = 9.0
 
+[node name="SizeSlider" parent="Camera3D/SettingsMenu/VBoxContainer" index="3"]
+value = 1.0
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 
 [connection signal="value_changed" from="Camera3D/SettingsMenu/VBoxContainer/ResSlider" to="Planet" method="_on_res_slider_value_changed"]
 [connection signal="toggled" from="Camera3D/SettingsMenu/VBoxContainer/WireframeBox" to="Planet" method="_on_wireframe_box_toggled"]
 [connection signal="color_changed" from="Camera3D/SettingsMenu/VBoxContainer/ColorPicker" to="Planet" method="_on_color_picker_color_changed"]
+[connection signal="value_changed" from="Camera3D/SettingsMenu/VBoxContainer/SizeSlider" to="Planet" method="_on_size_slider_value_changed"]
 
 [editable path="Camera3D/SettingsMenu"]

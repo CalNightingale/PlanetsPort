@@ -20,6 +20,7 @@ layout_mode = 2
 tooltip_text = "Resolution"
 min_value = 2.0
 value = 2.0
+rounded = true
 
 [node name="WireframeBox" type="CheckBox" parent="VBoxContainer"]
 layout_mode = 2
@@ -28,3 +29,11 @@ text = "Show wireframe"
 [node name="ColorPicker" type="ColorPickerButton" parent="VBoxContainer"]
 layout_mode = 2
 text = "Color"
+
+[node name="SizeSlider" type="HSlider" parent="VBoxContainer"]
+layout_mode = 2
+tooltip_text = "Size"
+min_value = 0.01
+max_value = 40.0
+step = 0.01
+value = 0.01
