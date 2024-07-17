@@ -6,6 +6,7 @@ public partial class Planet : Node3D
 {
 	private int _res = 10;
     private float _radius = 1;
+    private Color _color;
 
     [Export]
     public int Resolution
@@ -16,6 +17,17 @@ public partial class Planet : Node3D
             _res = value;
 			GD.PushWarning("Setting res to " + value);
 			_Ready();
+        }
+    }
+    [Export]
+    public Color Color
+    {
+        get => _color;
+        set
+        {
+            _color = value;
+            GD.PushWarning("Setting color to " + value);
+            _Ready();
         }
     }
 
@@ -38,10 +50,11 @@ public partial class Planet : Node3D
     {
         Initialize();
         GenerateMesh();
+        // update menu visuals
         var resSlider = GetNode<Slider>("../Camera3D/SettingsMenu/VBoxContainer/ResSlider");
         resSlider.Value = _res;
         var colorPicker = GetNode<ColorPickerButton>("../Camera3D/SettingsMenu/VBoxContainer/ColorPicker");
-        this._on_color_picker_color_changed(colorPicker.Color);
+        colorPicker.Color = _color;
         var sizeSlider = GetNode<Slider>("../Camera3D/SettingsMenu/VBoxContainer/SizeSlider");
         sizeSlider.Value = _radius;
     }
@@ -68,7 +81,7 @@ public partial class Planet : Node3D
                 _meshInstances[i].Mesh = new ArrayMesh();
             }
 
-            _terrainFaces[i] = new TerrainFace((ArrayMesh)_meshInstances[i].Mesh, Resolution, Radius, directions[i]);
+            _terrainFaces[i] = new TerrainFace((ArrayMesh)_meshInstances[i].Mesh, Resolution, Color, Radius, directions[i]);
         }
     }
 
@@ -99,10 +112,7 @@ public partial class Planet : Node3D
 
     void _on_color_picker_color_changed(Color color)
     {
-        foreach (TerrainFace face in _terrainFaces) 
-        {
-            face.updateColor(color);
-        }
+        Color = color;
     }
 
     void _on_size_slider_value_changed(float newSize) 

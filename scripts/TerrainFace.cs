@@ -5,16 +5,18 @@ public class TerrainFace
 {
     private ArrayMesh _mesh;
     private int _resolution;
+    private Color _color;
     private float _radius;
     private Vector3 _localUp;
     private Vector3 _axisA;
     private Vector3 _axisB;
 
-    public TerrainFace(ArrayMesh mesh, int resolution, float radius, Vector3 localUp)
+    public TerrainFace(ArrayMesh mesh, int resolution, Color color, float radius, Vector3 localUp)
     {
         _mesh = mesh;
         _resolution = resolution;
         _radius = radius;
+        _color = color;
         _localUp = localUp;
 
         _axisA = new Vector3(localUp.Y, localUp.Z, localUp.X);
@@ -58,6 +60,7 @@ public class TerrainFace
         array[(int)Mesh.ArrayType.Vertex] = vertices;
         array[(int)Mesh.ArrayType.Index] = indices;
         _mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, array);
+        updateColor(_color);
     }
 
     public void updateColor(Color newColor)
