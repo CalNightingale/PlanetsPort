@@ -66,6 +66,11 @@ public partial class Planet : Node3D
 
     private void UpdatePlanet()
     {
+        CallDeferred(nameof(DeferredUpdatePlanet));
+    }
+
+    private void DeferredUpdatePlanet()
+    {
         Initialize();
         GenerateMesh();
         UpdateMenuVisuals();
@@ -86,10 +91,13 @@ public partial class Planet : Node3D
             if (_meshInstances[i] == null)
             {
                 MeshInstance3D meshInstance = new MeshInstance3D();
-                meshInstance.Name = "mesh";
+                meshInstance.Name = $"mesh_{i}";
                 AddChild(meshInstance);
-
                 _meshInstances[i] = meshInstance;
+            }
+
+            if (_meshInstances[i].Mesh == null)
+            {
                 _meshInstances[i].Mesh = new ArrayMesh();
             }
 

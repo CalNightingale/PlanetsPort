@@ -23,7 +23,7 @@ public class TerrainFace
         _axisB = _localUp.Cross(_axisA);
     }
 
-    public void ConstructMesh()
+        public void ConstructMesh()
     {
         Vector3[] vertices = new Vector3[_resolution * _resolution];
         int[] indices = new int[(_resolution - 1) * (_resolution - 1) * 6];
@@ -36,7 +36,6 @@ public class TerrainFace
                 int i = x + y * _resolution;
                 Vector2 percent = new Vector2(x, y) / (float)(_resolution - 1);
                 Vector3 pointOnUnitCube = _localUp + (percent.X - 0.5f) * 2 * _axisA + (percent.Y - 0.5f) * 2 * _axisB;
-                // point on sphere = normalized point on unit cube * radius
                 Vector3 pointOnSphere = pointOnUnitCube.Normalized() * _radius;
                 vertices[i] = pointOnSphere;
 
@@ -60,29 +59,24 @@ public class TerrainFace
         array[(int)Mesh.ArrayType.Vertex] = vertices;
         array[(int)Mesh.ArrayType.Index] = indices;
         _mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, array);
-        updateColor(_color);
+        UpdateColor(_color);
     }
 
-    public void updateColor(Color newColor)
-        {
-        // get material
-        var material = _mesh.SurfaceGetMaterial(0);
+    public void UpdateColor(Color newColor)
+    {
+        _color = newColor;
+        StandardMaterial3D material;
 
-        // Create material if necessary
-        if (material == null)
+        if (_mesh.GetSurfaceCount() > 0 && _mesh.SurfaceGetMaterial(0) is StandardMaterial3D existingMaterial)
+        {
+            material = existingMaterial;
+        }
+        else
         {
             material = new StandardMaterial3D();
         }
 
-        // Ensure the material is a StandardMaterial3D
-        if (material is StandardMaterial3D standardMaterial)
-        {
-            // Update the albedo color of the material
-            standardMaterial.AlbedoColor = newColor;
-            _mesh.SurfaceSetMaterial(0, standardMaterial);
-        } else {
-            GD.PushError("Terrain Face material is nonstandard");
-        }
-        
+        material.AlbedoColor = _color;
+        _mesh.SurfaceSetMaterial(0, material);
     }
 }
