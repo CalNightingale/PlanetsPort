@@ -101,7 +101,7 @@ public partial class Planet : Node3D
                 _meshInstances[i].Mesh = new ArrayMesh();
             }
 
-            _terrainFaces[i] = new TerrainFace((ArrayMesh)_meshInstances[i].Mesh, _settings.Resolution, _settings.Color, _settings.Radius, directions[i]);
+            _terrainFaces[i] = new TerrainFace((ArrayMesh)_meshInstances[i].Mesh, _settings, directions[i]);
         }
     }
 
