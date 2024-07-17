@@ -4,42 +4,55 @@ using System;
 [Tool]
 public partial class Planet : Node3D
 {
-	private int _res = 10;
-    private float _radius = 1;
-    private Color _color;
+    public struct PlanetSettings
+    {
+        public int Resolution;
+        public float Radius;
+        public Color Color;
+
+        public PlanetSettings(int resolution, float radius, Color color)
+        {
+            Resolution = resolution;
+            Radius = radius;
+            Color = color;
+        }
+    }
+
+    private PlanetSettings _settings = new PlanetSettings(10, 1f, Colors.White);
 
     [Export]
     public int Resolution
     {
-        get => _res;
+        get => _settings.Resolution;
         set
         {
-            _res = value;
-			GD.PushWarning("Setting res to " + value);
-			_Ready();
-        }
-    }
-    [Export]
-    public Color Color
-    {
-        get => _color;
-        set
-        {
-            _color = value;
-            GD.PushWarning("Setting color to " + value);
-            _Ready();
+            _settings.Resolution = value;
+            GD.PushWarning($"Setting resolution to {value}");
+            UpdatePlanet();
         }
     }
 
     [Export]
     public float Radius
     {
-        get => _radius;
+        get => _settings.Radius;
         set
         {
-            _radius = value;
-			GD.PushWarning("Setting radius to " + value);
-			_Ready();
+            _settings.Radius = value;
+            GD.PushWarning($"Setting radius to {value}");
+            UpdatePlanet();
+        }
+    }
+
+    [Export]
+    public Color Color
+    {
+        get => _settings.Color;
+        set
+        {
+            _settings.Color = value;
+            GD.PushWarning($"Setting color to {value}");
+            UpdatePlanet();
         }
     }
 
@@ -48,15 +61,14 @@ public partial class Planet : Node3D
 
     public override void _Ready()
     {
+        UpdatePlanet();
+    }
+
+    private void UpdatePlanet()
+    {
         Initialize();
         GenerateMesh();
-        // update menu visuals
-        var resSlider = GetNode<Slider>("../Camera3D/SettingsMenu/VBoxContainer/ResSlider");
-        resSlider.Value = _res;
-        var colorPicker = GetNode<ColorPickerButton>("../Camera3D/SettingsMenu/VBoxContainer/ColorPicker");
-        colorPicker.Color = _color;
-        var sizeSlider = GetNode<Slider>("../Camera3D/SettingsMenu/VBoxContainer/SizeSlider");
-        sizeSlider.Value = _radius;
+        UpdateMenuVisuals();
     }
 
     void Initialize()
@@ -81,7 +93,7 @@ public partial class Planet : Node3D
                 _meshInstances[i].Mesh = new ArrayMesh();
             }
 
-            _terrainFaces[i] = new TerrainFace((ArrayMesh)_meshInstances[i].Mesh, Resolution, Color, Radius, directions[i]);
+            _terrainFaces[i] = new TerrainFace((ArrayMesh)_meshInstances[i].Mesh, _settings.Resolution, _settings.Color, _settings.Radius, directions[i]);
         }
     }
 
@@ -93,21 +105,24 @@ public partial class Planet : Node3D
         }
     }
 
-	void _on_res_slider_value_changed(float value)
-	{
-        int newResolution = (int)value;
-        Resolution = newResolution;	
-	}
+    void UpdateMenuVisuals()
+    {
+        var resSlider = GetNode<Slider>("../Camera3D/SettingsMenu/VBoxContainer/ResSlider");
+        resSlider.Value = _settings.Resolution;
+        var colorPicker = GetNode<ColorPickerButton>("../Camera3D/SettingsMenu/VBoxContainer/ColorPicker");
+        colorPicker.Color = _settings.Color;
+        var sizeSlider = GetNode<Slider>("../Camera3D/SettingsMenu/VBoxContainer/SizeSlider");
+        sizeSlider.Value = _settings.Radius;
+    }
 
-    // enable wireframe drawing if checked, disable if not
+    void _on_res_slider_value_changed(float value)
+    {
+        Resolution = (int)value;
+    }
+
     void _on_wireframe_box_toggled(bool toggled_on)
     {
-        if (toggled_on)
-        {
-		    GetViewport().DebugDraw = Viewport.DebugDrawEnum.Wireframe;
-        } else {
-            GetViewport().DebugDraw = Viewport.DebugDrawEnum.Disabled;
-        }
+        GetViewport().DebugDraw = toggled_on ? Viewport.DebugDrawEnum.Wireframe : Viewport.DebugDrawEnum.Disabled;
     }
 
     void _on_color_picker_color_changed(Color color)
@@ -120,4 +135,3 @@ public partial class Planet : Node3D
         Radius = newSize;
     }
 }
-

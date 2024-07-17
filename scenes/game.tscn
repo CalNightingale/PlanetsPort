@@ -7,8 +7,9 @@
 
 [node name="Planet" type="Node3D" parent="."]
 script = ExtResource("1_7700g")
-Resolution = 14
-Radius = 3.0
+Resolution = 5
+Color = Color(0.345903, 0.33178, 0.279362, 0)
+Radius = 2.74
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 2.08165e-12, 5)
@@ -16,13 +17,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 2.08165e-12, 5)
 [node name="SettingsMenu" parent="Camera3D" instance=ExtResource("2_qo20b")]
 
 [node name="ResSlider" parent="Camera3D/SettingsMenu/VBoxContainer" index="0"]
-value = 14.0
+value = 5.0
 
 [node name="ColorPicker" parent="Camera3D/SettingsMenu/VBoxContainer" index="2"]
-color = Color(0, 0, 0, 0)
+color = Color(0.345903, 0.33178, 0.279362, 0)
 
 [node name="SizeSlider" parent="Camera3D/SettingsMenu/VBoxContainer" index="3"]
-value = 3.0
+value = 2.74
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 
