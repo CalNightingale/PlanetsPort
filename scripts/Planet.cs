@@ -48,9 +48,6 @@ public partial class Planet : Node3D
                 meshInstance.Name = "mesh";
                 AddChild(meshInstance);
 
-                var material = new StandardMaterial3D();
-                meshInstance.MaterialOverride = material;
-
                 _meshInstances[i] = meshInstance;
                 _meshInstances[i].Mesh = new ArrayMesh();
             }
@@ -88,4 +85,13 @@ public partial class Planet : Node3D
             GetViewport().DebugDraw = Viewport.DebugDrawEnum.Disabled;
         }
     }
+
+    void _on_color_picker_color_changed(Color color)
+    {
+        foreach (TerrainFace face in _terrainFaces) 
+        {
+            face.updateColor(color);
+        }
+    }
 }
+

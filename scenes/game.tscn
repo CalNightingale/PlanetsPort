@@ -21,5 +21,6 @@ value = 9.0
 
 [connection signal="value_changed" from="Camera3D/SettingsMenu/VBoxContainer/ResSlider" to="Planet" method="_on_res_slider_value_changed"]
 [connection signal="toggled" from="Camera3D/SettingsMenu/VBoxContainer/WireframeBox" to="Planet" method="_on_wireframe_box_toggled"]
+[connection signal="color_changed" from="Camera3D/SettingsMenu/VBoxContainer/ColorPicker" to="Planet" method="_on_color_picker_color_changed"]
 
 [editable path="Camera3D/SettingsMenu"]

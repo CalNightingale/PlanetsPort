@@ -56,4 +56,27 @@ public class TerrainFace
         array[(int)Mesh.ArrayType.Index] = indices;
         _mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, array);
     }
+
+    public void updateColor(Color newColor)
+        {
+        // get material
+        var material = _mesh.SurfaceGetMaterial(0);
+
+        // Create material if necessary
+        if (material == null)
+        {
+            material = new StandardMaterial3D();
+        }
+
+        // Ensure the material is a StandardMaterial3D
+        if (material is StandardMaterial3D standardMaterial)
+        {
+            // Update the albedo color of the material
+            standardMaterial.AlbedoColor = newColor;
+            _mesh.SurfaceSetMaterial(0, standardMaterial);
+        } else {
+            GD.PushError("Terrain Face material is nonstandard");
+        }
+        
+    }
 }
