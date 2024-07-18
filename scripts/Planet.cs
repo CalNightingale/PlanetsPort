@@ -10,11 +10,45 @@ public partial class Planet : Node3D
     [Export]
     public bool AutoUpdate { get; set; } = true;
 
+    private ShapeSettings _shapeSettings;
     [Export]
-    public ShapeSettings ShapeSettings { get; set; }
+    public Resource ShapeSettingsResource
+    {
+        get => _shapeSettings;
+        set
+        {
+            if (value is ShapeSettings ss)
+            {
+                _shapeSettings = ss;
+            }
+            else
+            {
+                GD.PushError("Invalid ShapeSettings resource");
+            }
+        }
+    }
 
+    private ColorSettings _colorSettings;
     [Export]
-    public ColorSettings ColorSettings { get; set; }
+    public Resource ColorSettingsResource
+    {
+        get => _colorSettings;
+        set
+        {
+            if (value is ColorSettings cs)
+            {
+                _colorSettings = cs;
+                if (Engine.IsEditorHint() && AutoUpdate)
+                {
+                    GeneratePlanet();
+                }
+            }
+            else
+            {
+                GD.PushError("Invalid ColorSettings resource");
+            }
+        }
+    }   
 
     private ShapeGenerator shapeGenerator;
     private MeshInstance3D[] meshInstances = new MeshInstance3D[6];
@@ -27,9 +61,20 @@ public partial class Planet : Node3D
 
     public override void _Ready()
     {
-        Initialize();
         GeneratePlanet();
         UpdateLastValues();
+    }
+
+    private void GenerateSettingsResources()
+    {
+        if (ShapeSettingsResource == null)
+        {
+            ShapeSettingsResource = new ShapeSettings();
+        }
+        if (ColorSettingsResource == null)
+        {
+            ColorSettingsResource = new ColorSettings();
+        }
     }
 
     public override void _Process(double delta)
@@ -44,22 +89,23 @@ public partial class Planet : Node3D
     private bool SettingsChanged()
     {
         return Resolution != lastResolution ||
-               ShapeSettings != lastShapeSettings ||
-               ColorSettings != lastColorSettings ||
-               (ShapeSettings != null && !ShapeSettings.Equals(lastShapeSettings)) ||
-               (ColorSettings != null && !ColorSettings.Equals(lastColorSettings));
+               _shapeSettings != lastShapeSettings ||
+               _colorSettings != lastColorSettings ||
+               (_shapeSettings != null && !_shapeSettings.Equals(lastShapeSettings)) ||
+               (_colorSettings != null && !_colorSettings.Equals(lastColorSettings));
     }
 
     private void UpdateLastValues()
     {
         lastResolution = Resolution;
-        lastShapeSettings = ShapeSettings?.Clone() as ShapeSettings;
-        lastColorSettings = ColorSettings?.Clone() as ColorSettings;
+        lastShapeSettings = _shapeSettings?.Clone() as ShapeSettings;
+        lastColorSettings = _colorSettings?.Clone() as ColorSettings;
     }
 
     private void Initialize()
     {
-        shapeGenerator = new ShapeGenerator(ShapeSettings);
+        GenerateSettingsResources();
+        shapeGenerator = new ShapeGenerator(_shapeSettings);
         Vector3[] directions = { Vector3.Up, Vector3.Down, Vector3.Left, Vector3.Right, Vector3.Forward, Vector3.Back };
 
         for (int i = 0; i < 6; i++)
@@ -95,7 +141,7 @@ public partial class Planet : Node3D
     {
         foreach (MeshInstance3D m in meshInstances)
         {
-            (m.MaterialOverride as StandardMaterial3D).AlbedoColor = ColorSettings.PlanetColor;
+            (m.MaterialOverride as StandardMaterial3D).AlbedoColor = _colorSettings.PlanetColor;
         }
     }
 }

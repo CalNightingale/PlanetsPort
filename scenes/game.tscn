@@ -5,23 +5,22 @@
 [ext_resource type="PackedScene" uid="uid://dht50nfmcw35v" path="res://scenes/settingsMenu.tscn" id="2_qo20b"]
 [ext_resource type="Script" path="res://scripts/ColorSettings.cs" id="3_7bjg4"]
 
-[sub_resource type="Resource" id="Resource_t6ko3"]
+[sub_resource type="Resource" id="Resource_qtqjn"]
 script = ExtResource("2_q44kr")
-PlanetRadius = 1.52
+PlanetRadius = 1.65
 NoiseLayers = []
 
-[sub_resource type="Resource" id="Resource_3w2pp"]
+[sub_resource type="Resource" id="Resource_npqt5"]
 script = ExtResource("3_7bjg4")
-PlanetColor = Color(0.534203, 0.963085, 0.953315, 1)
+PlanetColor = Color(1, 0.364706, 1, 1)
 
 [node name="MainSceneNode" type="Node3D"]
 
 [node name="Planet" type="Node3D" parent="."]
 script = ExtResource("1_7700g")
-Resolution = 7
-AutoUpdate = false
-ShapeSettings = SubResource("Resource_t6ko3")
-ColorSettings = SubResource("Resource_3w2pp")
+Resolution = 12
+ShapeSettingsResource = SubResource("Resource_qtqjn")
+ColorSettingsResource = SubResource("Resource_npqt5")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 2.08165e-12, 5)
