@@ -4,128 +4,98 @@ using System;
 [Tool]
 public partial class Planet : Node3D
 {
-    private PlanetSettings _settings = new PlanetSettings(10, 1f, Colors.White);
+    [Export(PropertyHint.Range, "2,256")]
+    public int Resolution { get; set; } = 10;
 
     [Export]
-    public int Resolution
-    {
-        get => _settings.Resolution;
-        set
-        {
-            _settings.Resolution = value;
-            GD.PushWarning($"Setting resolution to {value}");
-            UpdatePlanet();
-        }
-    }
+    public bool AutoUpdate { get; set; } = true;
 
     [Export]
-    public float Radius
-    {
-        get => _settings.Radius;
-        set
-        {
-            _settings.Radius = value;
-            GD.PushWarning($"Setting radius to {value}");
-            UpdatePlanet();
-        }
-    }
+    public ShapeSettings ShapeSettings { get; set; }
 
     [Export]
-    public Color Color
-    {
-        get => _settings.Color;
-        set
-        {
-            _settings.Color = value;
-            GD.PushWarning($"Setting color to {value}");
-            UpdatePlanet();
-        }
-    }
+    public ColorSettings ColorSettings { get; set; }
 
-    private MeshInstance3D[] _meshInstances;
-    private TerrainFace[] _terrainFaces;
+    private ShapeGenerator shapeGenerator;
+    private MeshInstance3D[] meshInstances = new MeshInstance3D[6];
+    private TerrainFace[] terrainFaces = new TerrainFace[6];
+
+    // Add these fields to track changes
+    private int lastResolution;
+    private ShapeSettings lastShapeSettings;
+    private ColorSettings lastColorSettings;
 
     public override void _Ready()
     {
-        UpdatePlanet();
-    }
-
-    private void UpdatePlanet()
-    {
-        CallDeferred(nameof(DeferredUpdatePlanet));
-    }
-
-    private void DeferredUpdatePlanet()
-    {
         Initialize();
-        GenerateMesh();
-        UpdateMenuVisuals();
+        GeneratePlanet();
+        UpdateLastValues();
     }
 
-    void Initialize()
+    public override void _Process(double delta)
     {
-        if (_meshInstances == null || _meshInstances.Length == 0)
+        if (Engine.IsEditorHint() && AutoUpdate && SettingsChanged())
         {
-            _meshInstances = new MeshInstance3D[6];
+            GeneratePlanet();
+            UpdateLastValues();
         }
-        _terrainFaces = new TerrainFace[6];
+    }
 
+    private bool SettingsChanged()
+    {
+        return Resolution != lastResolution ||
+               ShapeSettings != lastShapeSettings ||
+               ColorSettings != lastColorSettings ||
+               (ShapeSettings != null && !ShapeSettings.Equals(lastShapeSettings)) ||
+               (ColorSettings != null && !ColorSettings.Equals(lastColorSettings));
+    }
+
+    private void UpdateLastValues()
+    {
+        lastResolution = Resolution;
+        lastShapeSettings = ShapeSettings?.Clone() as ShapeSettings;
+        lastColorSettings = ColorSettings?.Clone() as ColorSettings;
+    }
+
+    private void Initialize()
+    {
+        shapeGenerator = new ShapeGenerator(ShapeSettings);
         Vector3[] directions = { Vector3.Up, Vector3.Down, Vector3.Left, Vector3.Right, Vector3.Forward, Vector3.Back };
 
         for (int i = 0; i < 6; i++)
         {
-            if (_meshInstances[i] == null)
+            if (meshInstances[i] == null)
             {
-                MeshInstance3D meshInstance = new MeshInstance3D();
-                meshInstance.Name = $"mesh_{i}";
-                AddChild(meshInstance);
-                _meshInstances[i] = meshInstance;
+                meshInstances[i] = new MeshInstance3D();
+                AddChild(meshInstances[i]);
+                meshInstances[i].Mesh = new ArrayMesh();
+                meshInstances[i].MaterialOverride = new StandardMaterial3D();
             }
 
-            if (_meshInstances[i].Mesh == null)
-            {
-                _meshInstances[i].Mesh = new ArrayMesh();
-            }
-
-            _terrainFaces[i] = new TerrainFace((ArrayMesh)_meshInstances[i].Mesh, _settings, directions[i]);
+            terrainFaces[i] = new TerrainFace(shapeGenerator, meshInstances[i].Mesh as ArrayMesh, Resolution, directions[i]);
         }
     }
 
-    void GenerateMesh()
+    public void GeneratePlanet()
     {
-        foreach (TerrainFace face in _terrainFaces)
+        Initialize();
+        GenerateMesh();
+        GenerateColors();
+    }
+
+    private void GenerateMesh()
+    {
+        foreach (TerrainFace face in terrainFaces)
         {
             face.ConstructMesh();
         }
     }
 
-    void UpdateMenuVisuals()
+    private void GenerateColors()
     {
-        var resSlider = GetNode<Slider>("../Camera3D/SettingsMenu/VBoxContainer/ResSlider");
-        resSlider.Value = _settings.Resolution;
-        var colorPicker = GetNode<ColorPickerButton>("../Camera3D/SettingsMenu/VBoxContainer/ColorPicker");
-        colorPicker.Color = _settings.Color;
-        var sizeSlider = GetNode<Slider>("../Camera3D/SettingsMenu/VBoxContainer/SizeSlider");
-        sizeSlider.Value = _settings.Radius;
-    }
-
-    void _on_res_slider_value_changed(float value)
-    {
-        Resolution = (int)value;
-    }
-
-    void _on_wireframe_box_toggled(bool toggled_on)
-    {
-        GetViewport().DebugDraw = toggled_on ? Viewport.DebugDrawEnum.Wireframe : Viewport.DebugDrawEnum.Disabled;
-    }
-
-    void _on_color_picker_color_changed(Color color)
-    {
-        Color = color;
-    }
-
-    void _on_size_slider_value_changed(float newSize) 
-    {
-        Radius = newSize;
+        foreach (MeshInstance3D m in meshInstances)
+        {
+            (m.MaterialOverride as StandardMaterial3D).AlbedoColor = ColorSettings.PlanetColor;
+        }
     }
 }
